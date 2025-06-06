@@ -2,7 +2,6 @@
 // It takes in an input signal `input` and outputs 4 points:
 // - x0, y0: the top-left corner of the rectangle
 // - x1, y1: the bottom-right corner of the rectangle
-// hi this is me pushing shit
 module barry #(parameter N = 8) (
     input logic in, clk, reset,
     output logic [8:0] y0 // 10-bit outputs for rectangle pos
@@ -24,7 +23,7 @@ module barry #(parameter N = 8) (
 	always_ff @(posedge clk) begin
 		if (reset) begin
 			ps <= DOWN;
-			y0 <= 'd469;
+			y0 <= 'd419;
 			counter <= 'b0;
 			gravity <= 'b0;
 		end
@@ -34,7 +33,7 @@ module barry #(parameter N = 8) (
             y0 <= y0 - 'd3;
             gravity <= 2'b0;
         end
-		else if (counter == ('d255 - {gravity, 6'd0}) & ps == DOWN & y0 < 'd470) begin
+		else if (counter == ('d255 - {gravity, 6'd0}) & ps == DOWN & y0 < 'd420) begin
 			ps <= ns;
             counter <= 0;
 			y0 <= y0 + 1'b1;

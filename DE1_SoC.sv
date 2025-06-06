@@ -49,15 +49,15 @@ module DE1_SoC #(parameter which_clock = 11) (HEX0, HEX1, HEX2, HEX3, HEX4, HEX5
     logic [8:0] y0, y1;
 
     assign x0 = 'd20;
-	assign y1 = y0 + 9'd10; // Set y1 coordinate based on y0
-	assign x1 = x0 + 10'd10; // Set x1 coordinate based on x0
+	assign y1 = y0 + 9'd60; // Set y1 coordinate based on y0
+	assign x1 = x0 + 10'd30; // Set x1 coordinate based on x0
     
     barry #(8) b1(.clk, .in(~KEY[0]), .*);
     
 	animator owa_owa_meow_meow (
         .clk(CLOCK_50), .reset,
-        .x, .x0, .x1,
-        .y, .y0, .y1,
+        .x, .barry_x0(x0), .barry_x1(x1),
+        .y, .barry_y0(y0), .barry_y1(y1),
         .r, .g, .b, 
         .game_over
     ); 

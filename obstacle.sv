@@ -1,3 +1,7 @@
+// Description: This module generates two sets of obstacles with random gaps
+// using a linear feedback shift register (LFSR) for randomness.
+
+
 module obstacle (
 	input logic clk, reset, 
 	input logic [3:0] clkSpeed,
