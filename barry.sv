@@ -2,6 +2,7 @@
 // It takes in an input signal `input` and outputs 4 points:
 // - x0, y0: the top-left corner of the rectangle
 // - x1, y1: the bottom-right corner of the rectangle
+// hi this is me pushing shit
 module barry #(parameter N = 8) (
     input logic in, clk, reset,
     output logic [8:0] y0 // 10-bit outputs for rectangle pos
