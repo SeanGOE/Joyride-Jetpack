@@ -19,7 +19,7 @@ module DE1_SoC #(parameter which_clock = 11) (HEX0, HEX1, HEX2, HEX3, HEX4, HEX5
 	output VGA_SYNC_N;
 	output VGA_VS;
 
-	logic reset;
+	logic reset, flick1, flick2;
 	logic [9:0] x;
 	logic [8:0] y;
 	logic [7:0] r, g, b;
@@ -45,25 +45,31 @@ module DE1_SoC #(parameter which_clock = 11) (HEX0, HEX1, HEX2, HEX3, HEX4, HEX5
 	assign HEX4 = '1;
 	assign HEX5 = '1;
 
-    logic [9:0] x0, x1;
-    logic [8:0] y0, y1;
+	logic [9:0] x0, x1;
+	logic [8:0] y0, y1;
+	logic [9:0] obs1_x, obs2_x;
+	logic [1:0] obs1_pos, obs2_pos;
+	logic [1:0] obs1_type, obs2_type;
 
-    assign x0 = 'd20;
+  assign x0 = 'd20;
 	assign y1 = y0 + 9'd60; // Set y1 coordinate based on y0
 	assign x1 = x0 + 10'd30; // Set x1 coordinate based on x0
     
-    barry #(8) b1(.clk, .in(~KEY[0]), .*);
-    
+	barry #(8) b1(.clk, .in(~KEY[0]), .*);
+	obstacle #(7) obs(.type1(obs1_type), .type2(obs2_type), .*);
+
 	animator owa_owa_meow_meow (
-        .clk(CLOCK_50), .reset,
+        .clk(CLOCK_50), .reset, .on(~KEY[0]),
         .x, .barry_x0(x0), .barry_x1(x1),
         .y, .barry_y0(y0), .barry_y1(y1),
-        .r, .g, .b, 
+        .r, .g, .b, .*,
         .game_over
-    ); 
+  ); 
 	
 endmodule  // DE1_SoC
 
+// Testbench for DE1_SoC
+// Description: Simulates the DE1 SoC module for testing purposes
 
 `timescale 1 ps / 1 ps
 module DE1_SoC_testbench ();

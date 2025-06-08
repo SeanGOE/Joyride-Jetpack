@@ -1,48 +1,72 @@
 // Description: This module generates two sets of obstacles with random gaps
 // using a linear feedback shift register (LFSR) for randomness.
 
-
-module obstacle (
+module obstacle #(parameter N = 10) (
 	input logic clk, reset, 
-	input logic [3:0] clkSpeed,
-	output logic [2:0] gap, gap2,
-	output logic [3:0] start, start2
+	output logic [9:0] obs1_x, obs2_x,
+	output logic [1:0] obs1_pos, obs2_pos,
+	output logic [1:0] type1, type2,
+	output logic flick1, flick2
 	);
 	
 	logic [2:0] random, random2;
+	logic [2:0] ypos1, ypos2;
 	
-	lfsr l1(.clk, .reset, .out(random));
-	lfsr l2(.clk, .reset, .out(random2));
+	lfsr #(3) t1 (.clk, .reset, .out(ypos1));
+	lfsr #(3) t2 (.clk, .reset, .out(ypos2));
+
+	lfsr #(3) y1 (.clk, .reset, .out(random));
+	lfsr #(3) y2 (.clk, .reset, .out(random2));
 	
-	logic [7:0] counter = 0;
+	logic [N-1:0] counter = 0;
 	
 	always_ff @(posedge clk) 
 		if (reset) begin
-			start <= 4'b0;
-			start2 <= 8;
-			gap <= 3'b0;
-			gap2 <= 3'b101;
-		end else if (counter == (8'b11111111 - {clkSpeed, 4'b0})) begin
-			if (start == 15) gap <= random;
-			if (start2 == 15) gap2 <= random2;
-			
-			
-			start <= start + 1'b1;
-			start2 <= start2 + 1'b1;
-			counter <= 8'b0;
+			obs1_x <= 10'd740;
+			obs2_x <= 10'd380;
+			obs1_pos <= 'd0;
+			obs2_pos <= 'd1;
+			type1 <= 2'b00;
+			type2 <= 2'b10;
+			flick1 <= 1'b0;
+			flick2 <= 1'b1;
+		end else if (counter == ('1)) begin
+			if (obs1_x == '0) begin
+				obs1_pos <= ypos1[1:0];
+				type1 <= random[1:0];
+				obs1_x <= 10'd740; // Reset position after reaching the left edge
+			end 
+			else begin
+				obs1_x <= obs1_x - 1'b1; // Move obstacle 1 left
+			end
+			if (obs2_x == '0) begin
+				obs2_pos <= ypos2[1:0];
+				type2 <= random2[1:0];
+				obs2_x <= 10'd740; // Reset position after reaching the left edge
+			end
+			else begin
+				obs2_x <= obs2_x - 1'b1; // Move obstacle 2 left
+			end
+
+			// Toggle flicker states
+			flick1 <= ~flick1;
+			flick2 <= ~flick2;
+			counter <= 'b0;
 		end else begin
-			start <= start;
-			start2 <= start2;
+			obs1_x <= obs1_x;
+			obs2_x <= obs2_x;
 			counter <= counter+1'b1;
 		end
 endmodule
 
 module obstacle_tb ();
 	logic clk, reset;
-	logic [2:0] gap, gap2;
-	logic [3:0] start, start2, clkSpeed;
+	logic [9:0] obs1_x, obs2_x;
+	logic [1:0] obs1_pos, obs2_pos;
+	logic [1:0] type1, type2;
+	logic flick1, flick2;
 	
-	obstacle dut(.*);
+	obstacle #(2) dut(.*);
 	
 	parameter CLOCK_PERIOD=100;
 	initial begin
@@ -53,18 +77,11 @@ module obstacle_tb ();
 	
 	
 	initial begin
-		reset = 1'b1; gap = 3'b000; gap2 = 3'b000; 
-		clkSpeed = 4'b0000; @(posedge clk);
+		reset <= 1'b1; @(posedge clk);
 		reset = 1'b0; @(posedge clk);
 		
 		// slow obstacle movement
-		for (int i = 0; i < 256 * 30; i++) begin
-			@(posedge clk);
-		end
-		
-		clkSpeed = 4'b1111;
-		// fast obstacle movement
-		for (int i = 0; i < 256 * 30; i++) begin
+		for (int i = 0; i < 16000; i++) begin
 			@(posedge clk);
 		end
 	$stop;
