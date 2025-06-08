@@ -93,10 +93,18 @@ module animator(
 
     assign game_over = dead_obs1 | dead_obs2;
 
+    // assign inside_jetpack = 
+    //     x >= barry_x0 & x <= barry_x0 +'d10 &
+    //     y >= barry_y0 + 'd15 & y <= barry_y0+ 'd45 &
+    //     (barry_y1 - 'd15 - y) * 'd10 <= (x - barry_x0) * 'd30;
+    
+
+    // tspmo icl
     assign inside_jetpack = 
         x >= barry_x0 & x <= barry_x0 +'d10 &
-        y >= barry_y0 + 'd15 & y <= barry_y0+ 'd45 &
-        (barry_y1 - 'd15 - y) * 'd10 <= (x - barry_x0) * 'd30;
+        y <= barry_y0 + 'd45 & 
+         y >= (x - barry_x0) * (x - (barry_x0 + 10)) + (barry_y0 + 10) - ((barry_x0 + 5 - barry_x0) * (barry_x0 + 5 - (barry_x0 + 10)));
+        
     
     assign inside_fire = 
         x >= barry_x0 & x <= barry_x0 + 'd10 & 
