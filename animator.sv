@@ -10,6 +10,7 @@ module animator(
     input logic [1:0] obs1_type, obs2_type, obs1_pos, obs2_pos,
     input logic [9:0] obs1_x, obs2_x,
     output logic [7:0] r, g, b,
+    output logic [1:0] game_state, // 00: start, 01: playing, 10: game over
     output logic game_over
     );
 
@@ -82,9 +83,6 @@ module animator(
         // obs2_y0 = add_y0_2;
         // obs2_y1 = add_y0_2 + add_y1_2;
     end
-
-    // State definitions
-    enum logic {s_barry, done} ps, ns;
 
     // Status signals (really awful sorry)
     logic inside_barry, inside_jetpack, inside_torso, inside_head, inside_fire,
@@ -205,31 +203,35 @@ module animator(
     end
 
     // collision detection with obstacles
-   assign dead_obs1 = inside_obs1 & inside_barry;
-   assign dead_obs2 = inside_obs2 & inside_barry;
-
-    // State transition logic
-    always_ff @(posedge clk) begin
-      if (reset) begin
-        ps <= s_barry;
-      end
-      else begin
-        ps <= ns;
-      end
-    end
-
-    // Next state logic
-    always_comb
-       case (ps)
-           s_barry:   ns = game_over ? done : s_barry;
-           done:      ns = done;
-       endcase
+    assign dead_obs1 = inside_obs1 & inside_barry;
+    assign dead_obs2 = inside_obs2 & inside_barry;
+    game_state gs(.clk, .reset, .game_over, .start(on), .game_state);
 
     // Combinational logic for state transitions and output
     always_comb begin
         r = 8'hf0; g = 8'hf0; b = 8'hf0;
-        case(ps)
-            s_barry: begin
+        case(game_state)
+            2'b00: begin
+                if (inside_obs1) begin
+                   if (flick1) begin
+                       r = 8'hff; g = 8'h80; b = 0; // orange
+                   end else begin
+                       r = 8'hff; g = 8'hff; b = 0; // yellow
+                   end
+               end
+               else if (inside_obs2) begin
+                   if (flick2) begin
+                       r = 8'hff; g = 8'h80; b = 0; // orange
+                   end else begin
+                       r = 8'hff; g = 8'hff; b = 0; // yellow
+                   end
+               end 
+               else 
+                // if (inside_barry) begin
+                    r = 8'h00; g = 8'hff; b = 8'h00; // green screen
+                // end
+            end
+            2'b01: begin
                 if (inside_jetpack) begin
                     r = 8'd20; g = 8'd20; b = 8'd20; 
                 end 
@@ -250,6 +252,7 @@ module animator(
                    end
                end
                if (inside_obs2) begin
+               
                    if (flick2) begin
                        r = 8'hff; g = 8'h80; b = 0; // orange
                    end else begin
@@ -257,10 +260,25 @@ module animator(
                    end
                end
             end
-           done: begin
-               if (inside_barry) begin
+           2'b10: begin
+                if (inside_obs1) begin
+                   if (flick1) begin
+                       r = 8'hff; g = 8'h80; b = 0; // orange
+                   end else begin
+                       r = 8'hff; g = 8'hff; b = 0; // yellow
+                   end
+                end
+                else if (inside_obs2) begin
+                   if (flick2) begin
+                       r = 8'hff; g = 8'h80; b = 0; // orange
+                   end else begin
+                       r = 8'hff; g = 8'hff; b = 0; // yellow
+                   end
+               end 
+               else 
+               // if (inside_barry) begin
                    r = 8'h00; g = 8'h00; b = 8'hff; // blue screen
-               end
+               // end
            end
         endcase
     end

@@ -1,4 +1,6 @@
 // Description: A simple N-bit Linear Feedback Shift Register (LFSR) in SystemVerilog
+// Input: clk, reset
+// Output: out (N-bit output)
 module lfsr #(parameter N=3) (
   input logic clk, reset,
   output logic [N-1:0] out

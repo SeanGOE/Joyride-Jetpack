@@ -2,8 +2,10 @@
 // It takes in an input signal `input` and outputs 4 points:
 // - x0, y0: the top-left corner of the rectangle
 // - x1, y1: the bottom-right corner of the rectangle
+// Parameter N is used to define the width of the counter.
 module barry #(parameter N = 8) (
-    input logic in, clk, reset,
+    input logic on, clk, reset,
+    input logic [1:0] game_state,
     output logic [8:0] y0 // 10-bit outputs for rectangle pos
     );
 
@@ -14,14 +16,14 @@ module barry #(parameter N = 8) (
 
 	always_comb
 		case (ps)
-			UP: 	if (in) 	ns = UP;
+			UP: 	if (on) 	ns = UP;
 					else 		ns = DOWN;
-			DOWN: if (in) 	ns = UP;
+			DOWN: if (on) 	ns = UP;
 					else 		ns = DOWN;
 	    endcase
 	
 	always_ff @(posedge clk) begin
-		if (reset) begin
+		if (reset | game_state != 2'b01) begin
 			ps <= DOWN;
 			y0 <= 'd419;
 			counter <= 'b0;
@@ -48,7 +50,8 @@ endmodule
 
 // Testbench for the barry module
 module barry_tb();
-    logic in, reset, clk;
+    logic on, reset, clk;
+    logic [1:0] game_state;
     logic [8:0] y0;
 
     // instantiate the clock
@@ -66,15 +69,15 @@ module barry_tb();
         @(posedge clk);  reset <= 0;
 
         for(int i = 0; i < 500; i++) begin
-            @(posedge clk);  in <= 1;
+            @(posedge clk);  on <= 1;
         end
-        @(posedge clk);  in <= 1;
+        @(posedge clk);  on <= 1;
         for(int i = 0; i < 100; i++) begin
-            @(posedge clk);  in <= 0;
-            @(posedge clk);  in <= 0;
+            @(posedge clk);  on <= 0;
+            @(posedge clk);  on <= 0;
         end
         for(int i = 0; i < 20; i++) begin
-            @(posedge clk);  in <= 1;
+            @(posedge clk);  on <= 1;
         end
     
     $stop;  // pause the simulation
