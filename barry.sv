@@ -66,7 +66,7 @@ module barry_tb();
 
     initial begin
         @(posedge clk);  reset <= 1;
-        @(posedge clk);  reset <= 0;
+        @(posedge clk);  reset <= 0; game_state <= 2'b01;
 
         for(int i = 0; i < 500; i++) begin
             @(posedge clk);  on <= 1;
@@ -77,6 +77,18 @@ module barry_tb();
             @(posedge clk);  on <= 0;
         end
         for(int i = 0; i < 20; i++) begin
+            @(posedge clk);  on <= 1;
+        end
+		  
+		  game_state <= 2'b00;
+		  
+		  for(int i = 0; i < 500; i++) begin
+            @(posedge clk);  on <= 1;
+        end
+		  
+		  game_state <= 2'b10;
+		  
+		  for(int i = 0; i < 500; i++) begin
             @(posedge clk);  on <= 1;
         end
     

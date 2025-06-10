@@ -153,10 +153,7 @@ module animator(
                     y + (x - obs1_x0) >= obs1_y1;
             end
             default: begin // should never happen
-                obs1_x0 = 'X; 
-                obs1_x1 = 'X; 
-                obs1_y0 = 'X; 
-                obs1_y1 = 'X; 
+                inside_obs1 = 'X;  
             end
         endcase
 
@@ -194,10 +191,7 @@ module animator(
                     y + (x - obs2_x0) >= obs2_y1;
             end
             default: begin // should never happen
-                obs2_x0 = 'X; 
-                obs2_x1 = 'X; 
-                obs2_y0 = 'X; 
-                obs2_y1 = 'X; 
+                inside_obs2 = 'X; 
             end
         endcase
     end
@@ -284,4 +278,59 @@ module animator(
     end
 endmodule  // animator
 
-  
+// Testbench for the animator module
+`timescale 1 ps / 1 ps
+module animator_tb();
+    logic clk, reset, on, flick1, flick2;
+    logic [9:0] x, barry_x0, barry_x1;
+    logic [8:0] y, barry_y0, barry_y1;
+    logic [1:0] obs1_type, obs2_type, obs1_pos, obs2_pos;
+    logic [9:0] obs1_x, obs2_x;
+    logic [7:0] r, g, b;
+    logic [1:0] game_state; // 00: start, 01: playing, 10: game over
+    logic game_over;
+    
+    // instantiate the clock
+    parameter CLK_PERIOD = 100; // Clock period in time units
+    initial begin
+        clk <= 0;
+        forever #(CLK_PERIOD/2) clk <= ~clk; // Clock period of 10 time units
+    end
+
+    // Instantiate the animator module
+    animator dut (.*);
+
+    initial begin
+        @(posedge clk);  reset <= 1;
+        @(posedge clk);  reset <= 0; on <= 0;
+        barry_x0 <= 10'd20; barry_x1 <= 10'd50;
+        barry_y0 <= 9'd420; barry_y1 <= 9'd480;
+        x <= 10'd0; y <= 9'd0; on <= 1;
+		repeat (5) @(posedge clk);
+
+        // test for barry rendering
+        on <= 0; obs1_type <= 2'b00; obs2_type <= 2'b01;
+		  obs1_pos <= 2'b00; obs2_pos <= 2'b01;
+		  obs1_x <= 10'd740; obs2_x <= 10'd380;
+		  flick1 <= 0; flick2 <= 0;
+        for (int a = 0; a < 'd1; a++) begin  // barry stay still
+            for (int i = 0; i < 'd480; i++) begin
+                for (int j = 0; j < 'd640; j++) begin
+                    @(posedge clk); x <= j; y <= i;
+                end
+            end
+        end
+		  
+		  obs1_pos <= 2'b10; obs1_x <= 10'd100; @(posedge clk);
+		  for (int i = 0; i < 'd480; i++) begin
+				 for (int j = 0; j < 'd640; j++) begin
+					  @(posedge clk); x <= j; y <= i;
+				 end
+			end
+        
+        // test game over state
+		@(posedge clk); 
+		  repeat (5) @(posedge clk);
+    $stop;  // pause the simulation
+    end
+endmodule

@@ -38,3 +38,36 @@ module game_state (
     end
 
 endmodule  // game_state
+
+// Testbench for the game_state module
+module game_state_tb();
+    logic clk, reset, game_over, start;
+    logic [1:0] game_state;
+
+    // instantiate the clock
+    parameter CLK_PERIOD = 100; // Clock period in time units
+    initial begin
+        clk <= 0;
+        forever #(CLK_PERIOD/2) clk <= ~clk; // Clock period of 10 time units
+    end
+
+    // Instantiate the barry module
+    game_state dut (.*);
+
+    initial begin
+        @(posedge clk);  reset <= 1;
+        @(posedge clk);  reset <= 0; game_over <= 0; start <= 0;
+		  
+		  repeat (5) @(posedge clk);
+
+        @(posedge clk);  start <= 1;
+		  repeat (5) @(posedge clk);
+		  
+		  @(posedge clk);  game_over <= 1;
+		  repeat (5) @(posedge clk);
+		  
+		  
+    
+    $stop;  // pause the simulation
+    end
+endmodule

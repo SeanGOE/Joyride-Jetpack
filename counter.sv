@@ -44,9 +44,31 @@ module counter_tb();
 	
    initial begin
 	  @(posedge clk);  rst <= 1;     
-     @(posedge clk);  rst <= 0;
+     @(posedge clk);  rst <= 0; screen <= 0;
 	  
-	  for (int i = 0; i < 100; i++) begin
+	  for (int i = 0; i < 20; i++) begin
+			@(posedge clk);  on <= 0;
+			@(posedge clk);
+			@(posedge clk);
+			@(posedge clk);
+			@(posedge clk);
+			@(posedge clk);  on <= 1;
+	  end
+	  
+	  @(posedge clk);  screen <= 1;
+	  
+	  for (int i = 0; i < 10; i++) begin
+			@(posedge clk);  on <= 0;
+			@(posedge clk);
+			@(posedge clk);
+			@(posedge clk);
+			@(posedge clk);
+			@(posedge clk);  on <= 1;
+	  end
+	  
+	  @(posedge clk);  screen <= 0;
+	  
+	  for (int i = 0; i < 20; i++) begin
 			@(posedge clk);  on <= 0;
 			@(posedge clk);
 			@(posedge clk);

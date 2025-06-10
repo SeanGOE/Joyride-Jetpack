@@ -65,7 +65,7 @@ module DE1_SoC #(parameter which_clock = 11) (HEX0, HEX1, HEX2, HEX3, HEX4, HEX5
 	animator owa_owa_meow_meow (
         .clk(CLOCK_50),
         .barry_x0(x0), .barry_x1(x1),
-        .barry_y0(y0), .barry_y1(y1), .*,
+        .barry_y0(y0), .barry_y1(y1), .*
   ); 
 
 	// HEX score counter
@@ -88,7 +88,7 @@ module DE1_SoC_testbench ();
 	logic VGA_BLANK_N, VGA_CLK, VGA_HS, VGA_SYNC_N, VGA_VS;
 	
 	// instantiate module
-	DE1_SoC dut (.*);
+	DE1_SoC #(0) dut (.*);
 	
 	// create simulated clock
 	parameter T = 20;
@@ -99,7 +99,19 @@ module DE1_SoC_testbench ();
 	
 	// simulated inputs
 	initial begin
+		// reset
+		KEY[3] <= 0; KEY[0] <= 1; repeat(5) @(posedge CLOCK_50);
+		KEY[3] <= 1; repeat(5) @(posedge CLOCK_50);
 		
+		// start game
+		KEY[0] <= 0; repeat(5) @(posedge CLOCK_50);
+		KEY[0] <= 1; repeat(5) @(posedge CLOCK_50);
+		
+		KEY[0] <= 0; 
+		repeat(200000) @(posedge CLOCK_50);// just fly buddy
+		
+		KEY[0] <= 1; 
+		repeat(200000) @(posedge CLOCK_50);// icarus flew too close and now he falls
 		$stop();
 	end  // inputs initial
 	

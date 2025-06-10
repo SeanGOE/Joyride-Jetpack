@@ -44,7 +44,7 @@ module rom_y1 (
 
 	input	[1:0]  address;
 	input	  clock;
-	output	[7:0]  q;
+	output	[8:0]  q;
 `ifndef ALTERA_RESERVED_QIS
 // synopsys translate_off
 `endif
@@ -53,8 +53,8 @@ module rom_y1 (
 // synopsys translate_on
 `endif
 
-	wire [7:0] sub_wire0;
-	wire [7:0] q = sub_wire0[7:0];
+	wire [8:0] sub_wire0;
+	wire [8:0] q = sub_wire0[8:0];
 
 	altsyncram	altsyncram_component (
 				.address_a (address),
@@ -72,7 +72,7 @@ module rom_y1 (
 				.clocken1 (1'b1),
 				.clocken2 (1'b1),
 				.clocken3 (1'b1),
-				.data_a ({8{1'b1}}),
+				.data_a ({9{1'b1}}),
 				.data_b (1'b1),
 				.eccstatus (),
 				.q_b (),
@@ -94,7 +94,7 @@ module rom_y1 (
 		altsyncram_component.outdata_reg_a = "UNREGISTERED",
 		altsyncram_component.ram_block_type = "M10K",
 		altsyncram_component.widthad_a = 2,
-		altsyncram_component.width_a = 8,
+		altsyncram_component.width_a = 9,
 		altsyncram_component.width_byteena_a = 1;
 
 
@@ -108,7 +108,7 @@ endmodule
 // Retrieval info: PRIVATE: AclrByte NUMERIC "0"
 // Retrieval info: PRIVATE: AclrOutput NUMERIC "0"
 // Retrieval info: PRIVATE: BYTE_ENABLE NUMERIC "0"
-// Retrieval info: PRIVATE: BYTE_SIZE NUMERIC "8"
+// Retrieval info: PRIVATE: BYTE_SIZE NUMERIC "9"
 // Retrieval info: PRIVATE: BlankMemory NUMERIC "0"
 // Retrieval info: PRIVATE: CLOCK_ENABLE_INPUT_A NUMERIC "0"
 // Retrieval info: PRIVATE: CLOCK_ENABLE_OUTPUT_A NUMERIC "0"
@@ -129,7 +129,7 @@ endmodule
 // Retrieval info: PRIVATE: SingleClock NUMERIC "1"
 // Retrieval info: PRIVATE: UseDQRAM NUMERIC "0"
 // Retrieval info: PRIVATE: WidthAddr NUMERIC "2"
-// Retrieval info: PRIVATE: WidthData NUMERIC "8"
+// Retrieval info: PRIVATE: WidthData NUMERIC "9"
 // Retrieval info: PRIVATE: rden NUMERIC "0"
 // Retrieval info: LIBRARY: altera_mf altera_mf.altera_mf_components.all
 // Retrieval info: CONSTANT: ADDRESS_ACLR_A STRING "NONE"
@@ -145,14 +145,14 @@ endmodule
 // Retrieval info: CONSTANT: OUTDATA_REG_A STRING "UNREGISTERED"
 // Retrieval info: CONSTANT: RAM_BLOCK_TYPE STRING "M10K"
 // Retrieval info: CONSTANT: WIDTHAD_A NUMERIC "2"
-// Retrieval info: CONSTANT: WIDTH_A NUMERIC "8"
+// Retrieval info: CONSTANT: WIDTH_A NUMERIC "9"
 // Retrieval info: CONSTANT: WIDTH_BYTEENA_A NUMERIC "1"
 // Retrieval info: USED_PORT: address 0 0 2 0 INPUT NODEFVAL "address[1..0]"
 // Retrieval info: USED_PORT: clock 0 0 0 0 INPUT VCC "clock"
-// Retrieval info: USED_PORT: q 0 0 8 0 OUTPUT NODEFVAL "q[7..0]"
+// Retrieval info: USED_PORT: q 0 0 9 0 OUTPUT NODEFVAL "q[8..0]"
 // Retrieval info: CONNECT: @address_a 0 0 2 0 address 0 0 2 0
 // Retrieval info: CONNECT: @clock0 0 0 0 0 clock 0 0 0 0
-// Retrieval info: CONNECT: q 0 0 8 0 @q_a 0 0 8 0
+// Retrieval info: CONNECT: q 0 0 9 0 @q_a 0 0 9 0
 // Retrieval info: GEN_FILE: TYPE_NORMAL rom_y1.v TRUE
 // Retrieval info: GEN_FILE: TYPE_NORMAL rom_y1.inc FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL rom_y1.cmp FALSE
